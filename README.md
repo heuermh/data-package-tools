@@ -45,7 +45,7 @@ Generate a data package software bill of materials (SBOM).
 ```bash
 $ dpt generate --help
 USAGE
-  dpt generate [-hV] [--verbose] -a=<agent> [-o=<outputPath>] -p=<prefix> [-s=<suffix>] [<inputPaths>...]
+  dpt generate [-hV] [--verbose] -a=<agent> --bom-name=<bomName> --dataset-name=<datasetName> -p=<prefix> [<inputPaths>...]
 
 Generate a data package software bill of materials (SBOM).
 
@@ -53,13 +53,13 @@ PARAMETERS
       [<inputPaths>...]
 
 OPTIONS
-      --verbose                    Show additional logging messages.
-  -a, --agent=<agent>              Agent name, required.
-  -p, --prefix=<prefix>            Identifier URI prefix, required.
-  -s, --suffix=<suffix>            Optional identifier suffix, if any.
-  -o, --output-path=<outputPath>   Output path, default stdout.
-  -h, --help                       Show this help message and exit.
-  -V, --version                    Print version information and exit.
+      --verbose                      Show additional logging messages.
+  -a, --agent=<agent>                Agent name, required.
+  -p, --prefix=<prefix>              Identifier URI prefix, required.
+      --bom-name=<bomName>           Bill of materials name, required.
+      --dataset-name=<datasetName>   Dataset package name, required.
+  -h, --help                         Show this help message and exit.
+  -V, --version                      Print version information and exit.
 ```
 
 ### Validate command
