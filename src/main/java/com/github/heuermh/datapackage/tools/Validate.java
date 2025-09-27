@@ -54,7 +54,7 @@ public final class Validate implements Callable<Integer> {
         }
         else {
             for (Path inputPath : inputPaths) {
-                logger.info("Reading from path {}", (inputPath == null || "-".equals(inputPath.toString())) ? "<stdin>" : inputPath);
+                logger.info("Reading from {}", (inputPath == null || "-".equals(inputPath.toString())) ? "<stdin>" : "path " + inputPath);
             }
         }
 
