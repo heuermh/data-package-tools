@@ -1,0 +1,47 @@
+{
+  "@context" : "https://spdx.org/rdf/3.0.1/spdx-context.jsonld",
+  "@graph" : [ {
+    "@id" : "_:creationInfo_0",
+    "type" : "CreationInfo",
+    "specVersion" : "3.0.1",
+    "createdBy" : [ "https://example.org/spdx/agent/example" ],
+    "created" : "2026-11-23T14:33:11Z"
+  }, {
+    "spdxId" : "https://example.org/spdx/contains/example",
+    "type" : "Relationship",
+    "relationshipType" : "contains",
+    "to" : [ "https://example.org/spdx/file/01a20a1c-d56f-739a-8655-ed861e2c4bcc" ],
+    "from" : "https://example.org/spdx/dataset/example",
+    "creationInfo" : "_:creationInfo_0"
+  }, {
+    "spdxId" : "https://example.org/spdx/agent/example",
+    "type" : "Agent",
+    "name" : "example",
+    "creationInfo" : "_:creationInfo_0"
+  }, {
+    "spdxId" : "https://example.org/spdx/bom/example",
+    "type" : "Bom",
+    "rootElement" : [ "https://example.org/spdx/dataset/example" ],
+    "name" : "example",
+    "element" : [ "https://example.org/spdx/contains/example" ],
+    "creationInfo" : "_:creationInfo_0"
+  }, {
+    "spdxId" : "https://example.org/spdx/file/01a20a1c-d56f-739a-8655-ed861e2c4bcc",
+    "type" : "software_File",
+    "verifiedUsing" : [ {
+      "type" : "Hash",
+      "algorithm" : "sha256",
+      "hashValue" : "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    } ],
+    "name" : "empty.txt",
+    "creationInfo" : "_:creationInfo_0",
+    "software_fileKind" : "file"
+  }, {
+    "spdxId" : "https://example.org/spdx/dataset/example",
+    "type" : "dataset_DatasetPackage",
+    "dataset_datasetType" : [ "other" ],
+    "dataset_confidentialityLevel" : "green",
+    "name" : "example",
+    "creationInfo" : "_:creationInfo_0"
+  } ]
+}

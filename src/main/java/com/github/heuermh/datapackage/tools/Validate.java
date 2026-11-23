@@ -15,6 +15,11 @@
  */
 package com.github.heuermh.datapackage.tools;
 
+import static org.dishevelled.compress.InputStreams.inputStream;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import java.nio.file.Path;
 
 import java.util.Arrays;
@@ -22,8 +27,20 @@ import java.util.List;
 
 import java.util.concurrent.Callable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.spdx.core.InvalidSPDXAnalysisException;
+
+import org.spdx.library.SpdxModelFactory;
+
+import org.spdx.library.model.v3_0_1.core.SpdxDocument;
+
+import org.spdx.storage.simple.InMemSpdxStore;
+
+import org.spdx.v3jsonldstore.JsonLDStore;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -48,17 +65,54 @@ public final class Validate implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        SpdxModelFactory.init();
 
+        boolean valid = true;
         if (inputPaths == null || inputPaths.isEmpty()) {
-            logger.info("Reading from <stdin>");
+            valid = validate(null);
         }
         else {
             for (Path inputPath : inputPaths) {
-                logger.info("Reading from {}", (inputPath == null || "-".equals(inputPath.toString())) ? "<stdin>" : "path " + inputPath);
+                valid &= validate(inputPath);
             }
         }
+        return valid ? 0 : 1;
+    }
 
-        return 0;
+    /**
+     * Validate the specified input path is valid JSON-LD formatted SPDX 3.0.1.
+     *
+     * @param inputPath input path to validate, or <code>null</code> or <code>-</code> for <code>stdin</code>
+     * @return true if the specified input path is valid
+     * @throws IOException if an I/O error occurs
+     */
+    boolean validate(final Path inputPath) throws IOException {
+        boolean stdin = (inputPath == null || "-".equals(inputPath.toString()));
+        String source = stdin ? "<stdin>" : "path " + inputPath;
+        logger.info("Reading from {}", source);
+
+        // use a new model store for each input, to avoid element ID collisions between inputs
+        JsonLDStore jsonLdStore = new JsonLDStore(new InMemSpdxStore());
+        try (InputStream inputStream = stdin ? System.in : inputStream(inputPath)) {
+            SpdxDocument document = (SpdxDocument) jsonLdStore.deSerialize(inputStream, false);
+            List<String> verificationErrors = document.verify();
+            if (verificationErrors.isEmpty()) {
+                logger.info("Validated {}", source);
+                return true;
+            }
+            for (String verificationError : verificationErrors) {
+                logger.error("Invalid {}: {}", source, verificationError);
+            }
+            return false;
+        }
+        catch (JsonProcessingException | InvalidSPDXAnalysisException | RuntimeException e) {
+            logger.error("Invalid {}: {}", source, e.getMessage());
+            return false;
+        }
+        catch (IOException e) {
+            logger.error("Unable to read from {}: {}", source, e.getMessage());
+            throw e;
+        }
     }
 
 
